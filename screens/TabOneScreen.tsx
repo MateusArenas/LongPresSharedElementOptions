@@ -1,23 +1,74 @@
-import { StyleSheet } from 'react-native';
+import { FlatList, StyleSheet, TouchableOpacity, View } from 'react-native';
 
 import EditScreenInfo from '../components/EditScreenInfo';
-import { Text, View } from '../components/Themed';
+import { Text } from '../components/Themed';
 import { RootTabScreenProps } from '../types';
+import React from 'react';
+import * as Animatable from 'react-native-animatable';
+
+import PushModal from '../components/PushModal';
 
 export default function TabOneScreen({ navigation }: RootTabScreenProps<'TabOne'>) {
+  const pushModalRef = React.useRef(null)
+  const elementRefs = {}
+  const [selected, setSelected] = React.useState(undefined)
+
+  const data = [{ _id: 0, text: 'oi td bem?' }, { _id: 1, text: 'eae...' }, { _id: 2, text: 'ola td bem?' }, { _id: 3, text: 'salve gene' }, { _id: 4, text: 'eae tiu' }]
+
+  data?.forEach(item => {
+    elementRefs[item?._id] = React.createRef();
+  })
+
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Tab One</Text>
-      <View style={styles.separator} lightColor="#eee" darkColor="rgba(255,255,255,0.1)" />
-      <EditScreenInfo path="/screens/TabOneScreen.tsx" />
+      <FlatList 
+        data={data}
+        renderItem={({ item }) => (
+          <View style={{ flexDirection: 'row', padding: 10 }}>
+            <TouchableOpacity onLongPress={(e) => {
+              if (elementRefs[item?._id]?.current) {
+                pushModalRef.current?.open(elementRefs[item?._id], 'right');
+                setSelected(item?._id)
+              }
+            }}>
+                  <View ref={elementRefs[item?._id]} >
+                    <Item item={item}/>
+                  </View>
+            </TouchableOpacity>
+          </View>
+        )}
+      />
+      <PushModal ref={pushModalRef} 
+            padding={10}
+            contentContainerstyle={[{ flex: 1, alignItems: 'flex-start', justifyContent: 'flex-end'  }]}
+            options={[
+              { label: 'Favoritar' },
+              { label: 'Responder', icon: 'arrow-undo-circle' ,onPress: item => setReply(item?._id) },
+              { label: 'Encaminhar' },
+              { label: 'Copiar' },
+              { label: 'Dados' },
+              { label: 'Apagar' },
+            ]}
+          >
+            <Item item={data?.find(item => item?._id === selected)}/>
+        </PushModal>
     </View>
   );
 }
 
+const Item: React.FC = ({ item }) => {
+  return (
+    <View style={{ padding: 20, backgroundColor: 'white', borderWidth: 1, borderColor: 'rgba(0,0,0,.1)', borderRadius:20 }}>
+      <Text>{item?.text}</Text>
+    </View>
+  )
+}
+
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    alignItems: 'center',
+    // alignItems: 'center',
     justifyContent: 'center',
   },
   title: {
