@@ -10,11 +10,11 @@ import PushModal from '../components/PushModal';
 
 export default function TabOneScreen({ navigation }: RootTabScreenProps<'TabOne'>) {
   const pushModalRef = React.useRef(null)
+  
+  const data = [{ _id: 0, text: 'Hello all well?' }, { _id: 1, text: 'hey...' }, { _id: 2, text: 'Hello, how are you?' }, { _id: 3, text: 'hey how are you' }, { _id: 4, text: 'hey uncle' }]
+  
   const elementRefs = {}
   const [selected, setSelected] = React.useState(undefined)
-
-  const data = [{ _id: 0, text: 'oi td bem?' }, { _id: 1, text: 'eae...' }, { _id: 2, text: 'ola td bem?' }, { _id: 3, text: 'salve gene' }, { _id: 4, text: 'eae tiu' }]
-
   data?.forEach(item => {
     elementRefs[item?._id] = React.createRef();
   })
